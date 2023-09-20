@@ -9,6 +9,8 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  hive: ^2.2.3
+  hive_flutter: ^1.1.0
 
   cupertino_icons: ^1.0.2
   flutter_slidable: ^1.2.0
@@ -16,6 +18,8 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  # hive: ^2.2.3
+  # hive_flutter: ^1.1.0
 
   flutter_lints: ^2.0.0
 

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:relearn/data/datavbase.dart';
 import 'package:relearn/utils/dialoguebox.dart';
 import 'package:relearn/utils/todo_tile.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -10,30 +12,44 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  final _mybox = Hive.box('mybox');
+
   final _controller = TextEditingController();
 
-  List todoList = [
-    ["Test", false]
-  ];
+  TodoDatabase db = TodoDatabase();
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    if (_mybox.get("TODOLIST") == null) {
+      db.createInitialData();
+    } else {
+      db.loadData();
+    }
+    super.initState();
+  }
 
   void checkChange(bool? value, int index) {
     setState(() {
-      todoList[index][1] = !todoList[index][1];
+      db.todoList[index][1] = !db.todoList[index][1];
     });
+    db.updateDatabase();
   }
 
   void saveNewTask() {
     setState(() {
-      todoList.add(
+      db.todoList.add(
         [_controller.text, false],
       );
     });
+    db.updateDatabase();
   }
 
   void deleteTask(int index) {
     setState(() {
-      todoList.removeAt(index);
+      db.todoList.removeAt(index);
     });
+    db.updateDatabase();
   }
 
   // Create new task
@@ -70,11 +86,11 @@ class _HomeScreenState extends State<HomeScreen> {
           child: const Icon(Icons.add),
         ),
         body: ListView.builder(
-          itemCount: todoList.length,
+          itemCount: db.todoList.length,
           itemBuilder: (context, index) {
             return TodloTile(
-              name: todoList[index][0],
-              check: todoList[index][1],
+              name: db.todoList[index][0],
+              check: db.todoList[index][1],
               onchange: (value) => {checkChange(value, index)},
               deleteFunction: (context) => deleteTask(index),
             );
